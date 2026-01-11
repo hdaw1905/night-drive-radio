@@ -8,7 +8,9 @@ html, body {
   font-family: Arial, sans-serif;
 }
 
-/* FULLSCREEN VIDEO CONTAINER */
+/* ===============================
+   FULLSCREEN BACKGROUND VIDEO
+================================ */
 #bg-video {
   position: fixed;
   top: 0;
@@ -16,10 +18,10 @@ html, body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  z-index: 0; /* visible */
+  z-index: 0;
 }
 
-/* YouTube iframe – fullscreen cover */
+/* YouTube iframe — cover screen */
 #bg-video iframe {
   position: absolute;
   top: 50%;
@@ -28,51 +30,96 @@ html, body {
   width: 177.78vh; /* 16:9 ratio */
   transform: translate(-50%, -50%);
   pointer-events: none;
-  filter: brightness(0.4);
+  filter: brightness(0.45);
 }
 
-/* UI ALWAYS ON TOP */
+/* ===============================
+   PLAYER CONTAINER (DASHBOARD)
+================================ */
 .controls {
   position: fixed;
-  bottom: 40px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.6);
-  padding: 20px;
-  border-radius: 14px;
+  width: 95%;
+  max-width: 900px;
+
+  background: rgba(0, 0, 0, 0.55);
+  padding: 14px 16px;
+  border-radius: 16px;
   color: white;
-  width: 90%;
-  max-width: 460px;
+
   z-index: 10;
+  backdrop-filter: blur(6px);
 }
 
+/* ===============================
+   TOP ROW: TITLE + INPUT + PLAY
+================================ */
+.player-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Title */
 .title {
-  text-align: center;
-  font-size: 22px;
-  margin-bottom: 16px;
+  font-size: 18px;
+  white-space: nowrap;
 }
 
-input[type="text"] {
-  width: 100%;
-  padding: 12px;
-  border-radius: 8px;
+/* Input */
+.player-row input[type="text"] {
+  padding: 10px 12px;
+  border-radius: 10px;
   border: none;
-  margin-bottom: 12px;
+  font-size: 14px;
+  width: 100%;
 }
 
-button {
-  width: 100%;
-  padding: 14px;
-  border-radius: 8px;
+/* Play button */
+.player-row button {
+  padding: 10px 16px;
+  border-radius: 10px;
   border: none;
   background: #1db954;
   color: black;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 12px;
 }
 
-input[type="range"] {
+/* ===============================
+   VOLUME ROW
+================================ */
+.volume-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Volume icon */
+.vol-icon {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/* Volume slider */
+.volume-row input[type="range"] {
   width: 100%;
+}
+
+/* ===============================
+   MOBILE OPTIMIZATION
+================================ */
+@media (max-width: 600px) {
+  .player-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .title {
+    display: none; /* save space on mobile */
+  }
 }
