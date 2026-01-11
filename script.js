@@ -1,86 +1,58 @@
 let bgPlayer;
 let musicPlayer;
-let apiReady = false;
 
-// YouTube API ready
 function onYouTubeIframeAPIReady() {
-  apiReady = true;
 
-  // Background driving video
+  // Background driving video (this is the WORKING way)
   bgPlayer = new YT.Player("bg-video", {
-    width: "100%",
-    height: "100%",
     videoId: "spJqqu2H8n4",
     playerVars: {
       autoplay: 1,
       loop: 1,
       playlist: "spJqqu2H8n4",
       controls: 0,
-      modestbranding: 1,
-      playsinline: 1,
-      rel: 0
-    },
-    events: {
-      onReady: (e) => {
-        e.target.mute();       // allow autoplay
-        e.target.playVideo(); // FORCE PLAY
-        e.target.setVolume(20); // low ambient volume
-      }
+      mute: 1,
+      playsinline: 1
     }
   });
 
-  // Music player (hidden)
+  // Music player
   musicPlayer = new YT.Player("music-player", {
     height: "0",
     width: "0",
-    playerVars: {
-      autoplay: 0,
-      controls: 0
-    }
+    playerVars: { controls: 0 }
   });
 }
 
-// Extract video ID
+// Extract ID
 function extractVideoId(url) {
-  const match = url.match(
-    /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&]+)/i
-  );
-  return match ? match[1] : null;
+  const m = url.match(/(?:v=|\.be\/)([^&]+)/);
+  return m ? m[1] : null;
 }
 
-// User clicks Play → audio allowed
 function playMusic() {
-  if (!apiReady) {
-    alert("Player loading… try again in 1 second.");
+  const url = document.getElementById("ytUrl").value;
+  const id = extractVideoId(url);
+
+  if (!id) {
+    alert("Invalid YouTube link");
     return;
   }
 
-  const url = document.getElementById("ytUrl").value.trim();
-  const videoId = extractVideoId(url);
-
-  if (!videoId) {
-    alert("❌ Invalid YouTube link");
-    return;
-  }
-
-  // Start music
-  musicPlayer.loadVideoById(videoId);
+  // Music
+  musicPlayer.loadVideoById(id);
   musicPlayer.playVideo();
-  musicPlayer.setVolume(50);
 
-  // Unmute background after interaction
+  // Enable background sound AFTER click
   bgPlayer.unMute();
-  bgPlayer.setVolume(20);
+
+  setVolume(50);
 }
 
-// ONE volume slider controls BOTH
-function setVolume(value) {
-  if (musicPlayer) {
-    musicPlayer.setVolume(value);
-  }
+// ONE slider → BOTH players
+function setVolume(v) {
+  musicPlayer.setVolume(v);
 
-  if (bgPlayer) {
-    // background always quieter (car ambience)
-    bgPlayer.setVolume(Math.max(5, value * 0.3));
-  }
+  // background quieter (car ambience)
+  bgPlayer.setVolume(Math.max(5, v * 0.25));
 }
