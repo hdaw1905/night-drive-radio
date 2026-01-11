@@ -1,55 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Night Drive Radio</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Night Drive Radio</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-
-  <!-- Background Video -->
-  <div id="bg-video"></div>
-
-  <!-- Hidden music player (YouTube API) -->
-  <div id="music-player"></div>
-
-  <!-- Toggle Player Button -->
-  <button id="togglePlayer" onclick="togglePlayer()">🕹️</button>
-
-  <!-- UI Player -->
-  <div class="controls">
-
-    <!-- TOP ROW -->
-    <div class="player-row">
-      <div class="title">🌙 Night Drive Radio</div>
-
-      <input
-        id="ytUrl"
-        type="text"
-        placeholder="Paste YouTube music link..."
-      />
-
-      <button onclick="playMusic()">▶</button>
+    <div id="video-background">
+        <div id="background-player"></div>
     </div>
 
-    <!-- VOLUME ROW -->
-    <div class="volume-row">
-      <span class="vol-icon">🔊</span>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value="50"
-        oninput="setVolume(this.value)"
-      />
+    <div id="music-player"></div>
+
+    <div id="player-ui" class="player-container">
+        <div class="player-top">
+            <div class="player-brand">
+                <span class="moon-icon">🌙</span>
+                <span class="brand-text">Night Drive Radio</span>
+            </div>
+            <div class="player-input-group">
+                <input
+                    type="text"
+                    id="youtube-url"
+                    placeholder="Paste YouTube URL or playlist link..."
+                    class="url-input"
+                />
+            </div>
+            <button id="play-btn" class="play-button">▶ Play</button>
+        </div>
+        <div class="player-bottom">
+            <label for="volume-slider" class="volume-label">🔊</label>
+            <input
+                type="range"
+                id="volume-slider"
+                min="0"
+                max="100"
+                value="70"
+                class="volume-slider"
+            />
+            <span id="volume-value" class="volume-value">70%</span>
+        </div>
     </div>
 
-  </div>
+    <button id="toggle-player-btn" class="toggle-button">Hide Player</button>
 
-  <!-- Scripts -->
-  <script src="https://www.youtube.com/iframe_api"></script>
-  <script src="script.js"></script>
-
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script type="module" src="/script.js"></script>
 </body>
 </html>
