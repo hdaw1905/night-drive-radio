@@ -1,87 +1,63 @@
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
   height: 100%;
-  overflow: hidden;
   background: black;
+  overflow: hidden;
   font-family: Arial, sans-serif;
 }
 
-/* Fullscreen background wrapper */
-#video-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  overflow: hidden;
-}
-
-/* YouTube iframe fullscreen fix */
+/* Background video */
 #bg-video iframe {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
-  width: 120vw;
-  height: 120vh;
+  width: 100vw;
+  height: 100vh;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  filter: brightness(0.35) blur(0.8px);
+  filter: brightness(0.4);
 }
 
-/* Controls UI */
+/* UI */
 .controls {
   position: fixed;
   bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.65);
-  padding: 20px 24px;
-  border-radius: 16px;
+  background: rgba(0,0,0,0.6);
+  padding: 20px;
+  border-radius: 14px;
   color: white;
   width: 90%;
   max-width: 460px;
-  backdrop-filter: blur(6px);
 }
 
-/* Title */
 .title {
   text-align: center;
   font-size: 22px;
   margin-bottom: 16px;
-  letter-spacing: 1px;
 }
 
-/* Inputs */
 input[type="text"] {
   width: 100%;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
-  margin-bottom: 14px;
-  font-size: 14px;
+  margin-bottom: 12px;
 }
 
-/* Play button */
 button {
   width: 100%;
   padding: 14px;
-  border-radius: 10px;
+  border-radius: 8px;
   border: none;
   background: #1db954;
   color: black;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 14px;
-}
-
-/* Volume */
-label {
-  font-size: 14px;
-  opacity: 0.85;
+  margin-bottom: 12px;
 }
 
 input[type="range"] {
