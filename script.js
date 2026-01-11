@@ -6,7 +6,7 @@ let apiReady = false;
 function onYouTubeIframeAPIReady() {
   apiReady = true;
 
-  // Background video (MUTED autoplay allowed)
+  // Background driving video
   bgPlayer = new YT.Player("bg-video", {
     width: "100%",
     height: "100%",
@@ -16,19 +16,20 @@ function onYouTubeIframeAPIReady() {
       loop: 1,
       playlist: "spJqqu2H8n4",
       controls: 0,
-      mute: 1,
       modestbranding: 1,
       playsinline: 1,
       rel: 0
     },
     events: {
       onReady: (e) => {
-        e.target.playVideo(); // force start
+        e.target.mute();       // allow autoplay
+        e.target.playVideo(); // FORCE PLAY
+        e.target.setVolume(20); // low ambient volume
       }
     }
   });
 
-  // Music player (hidden, waits for click)
+  // Music player (hidden)
   musicPlayer = new YT.Player("music-player", {
     height: "0",
     width: "0",
@@ -39,7 +40,7 @@ function onYouTubeIframeAPIReady() {
   });
 }
 
-// Extract video ID safely
+// Extract video ID
 function extractVideoId(url) {
   const match = url.match(
     /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&]+)/i
@@ -47,10 +48,10 @@ function extractVideoId(url) {
   return match ? match[1] : null;
 }
 
-// USER CLICK = AUDIO ALLOWED
+// User clicks Play → audio allowed
 function playMusic() {
-  if (!apiReady || !musicPlayer) {
-    alert("Player not ready yet, wait 1 second and try again.");
+  if (!apiReady) {
+    alert("Player loading… try again in 1 second.");
     return;
   }
 
@@ -58,18 +59,28 @@ function playMusic() {
   const videoId = extractVideoId(url);
 
   if (!videoId) {
-    alert("❌ Please paste a valid YouTube link");
+    alert("❌ Invalid YouTube link");
     return;
   }
 
+  // Start music
   musicPlayer.loadVideoById(videoId);
-  musicPlayer.playVideo();   // REQUIRED
+  musicPlayer.playVideo();
   musicPlayer.setVolume(50);
+
+  // Unmute background after interaction
+  bgPlayer.unMute();
+  bgPlayer.setVolume(20);
 }
 
-// Volume slider
+// ONE volume slider controls BOTH
 function setVolume(value) {
   if (musicPlayer) {
     musicPlayer.setVolume(value);
+  }
+
+  if (bgPlayer) {
+    // background always quieter (car ambience)
+    bgPlayer.setVolume(Math.max(5, value * 0.3));
   }
 }
