@@ -11,24 +11,42 @@
   <!-- Background Video -->
   <div id="bg-video"></div>
 
-  <!-- Hidden music player -->
+  <!-- Hidden music player (YouTube API) -->
   <div id="music-player"></div>
 
-  <!-- UI -->
+  <!-- UI Player -->
   <div class="controls">
-    <div class="title">🌙 Night Drive Radio</div>
 
-    <input id="ytUrl" type="text"
-      placeholder="Paste YouTube music link..." />
+    <!-- TOP ROW: title + input + play -->
+    <div class="player-row">
+      <div class="title">🌙 Night Drive Radio</div>
 
-    <button onclick="playMusic()">▶ Play Music</button>
+      <input
+        id="ytUrl"
+        type="text"
+        placeholder="Paste YouTube music link..."
+      />
 
-    <label>🔊 Volume</label>
-    <input type="range" min="0" max="100" value="50"
-      oninput="setVolume(this.value)" />
+      <button onclick="playMusic()">▶</button>
+    </div>
+
+    <!-- VOLUME ROW -->
+    <div class="volume-row">
+      <span class="vol-icon">🔊</span>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value="50"
+        oninput="setVolume(this.value)"
+      />
+    </div>
+
   </div>
 
+  <!-- Scripts -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script src="script.js"></script>
+
 </body>
 </html>
