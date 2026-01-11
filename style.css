@@ -1,34 +1,33 @@
 html, body {
   margin: 0;
   padding: 0;
-  width: 100%;
   height: 100%;
   background: black;
   overflow: hidden;
   font-family: Arial, sans-serif;
 }
 
-/* Fullscreen background container */
+/* Background video area (NOT fullscreen) */
 #bg-video {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
-  z-index: -1;
+  height: 60vh;          /* 👈 limits height (windshield feel) */
   overflow: hidden;
+  z-index: -1;
 }
 
-/* YouTube iframe – true fullscreen cover */
+/* YouTube iframe */
 #bg-video iframe {
   position: absolute;
   top: 50%;
   left: 50%;
-  height: 100vh;
-  width: 177.78vh; /* 16:9 ratio (16/9 * 100) */
+  width: 110vw;          /* slight zoom for cinematic look */
+  height: 100%;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  filter: brightness(0.4);
+  filter: brightness(0.45);
 }
 
 /* UI */
@@ -37,13 +36,12 @@ html, body {
   bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0,0,0,0.6);
   padding: 20px;
   border-radius: 14px;
   color: white;
   width: 90%;
   max-width: 460px;
-  backdrop-filter: blur(6px);
 }
 
 .title {
