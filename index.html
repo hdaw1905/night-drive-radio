@@ -4,44 +4,31 @@
   <meta charset="UTF-8" />
   <title>Night Drive Radio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Background driving video -->
-  <div id="video-wrapper">
-    <div id="bg-video"></div>
-  </div>
+  <!-- Background Video -->
+  <div id="bg-video"></div>
 
   <!-- Hidden music player -->
   <div id="music-player"></div>
 
-  <!-- UI Controls -->
+  <!-- UI -->
   <div class="controls">
     <div class="title">🌙 Night Drive Radio</div>
 
-    <input
-      id="ytUrl"
-      type="text"
-      placeholder="Paste YouTube music link here..."
-    />
+    <input id="ytUrl" type="text"
+      placeholder="Paste YouTube music link..." />
 
     <button onclick="playMusic()">▶ Play Music</button>
 
     <label>🔊 Volume</label>
-    <input
-      type="range"
-      min="0"
-      max="100"
-      value="50"
-      oninput="setVolume(this.value)"
-    />
+    <input type="range" min="0" max="100" value="50"
+      oninput="setVolume(this.value)" />
   </div>
 
-  <!-- YouTube API -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script src="script.js"></script>
-
 </body>
 </html>
