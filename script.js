@@ -3,7 +3,7 @@ let musicPlayer;
 
 function onYouTubeIframeAPIReady() {
 
-  // Background driving video (this is the WORKING way)
+  // Background driving video (fixed 55% volume)
   bgPlayer = new YT.Player("bg-video", {
     videoId: "spJqqu2H8n4",
     playerVars: {
@@ -11,12 +11,19 @@ function onYouTubeIframeAPIReady() {
       loop: 1,
       playlist: "spJqqu2H8n4",
       controls: 0,
-      mute: 1,
+      mute: 1,          // required for autoplay
       playsinline: 1
+    },
+    events: {
+      onReady: (e) => {
+        e.target.unMute();     // enable sound after load
+        e.target.setVolume(55); // ✅ FIXED at 55%
+        e.target.playVideo();
+      }
     }
   });
 
-  // Music player
+  // Music player (hidden)
   musicPlayer = new YT.Player("music-player", {
     height: "0",
     width: "0",
@@ -24,14 +31,15 @@ function onYouTubeIframeAPIReady() {
   });
 }
 
-// Extract ID
+// Extract YouTube video ID
 function extractVideoId(url) {
-  const m = url.match(/(?:v=|\.be\/)([^&]+)/);
-  return m ? m[1] : null;
+  const match = url.match(/(?:v=|\.be\/)([^&]+)/);
+  return match ? match[1] : null;
 }
 
+// Play user music (after click)
 function playMusic() {
-  const url = document.getElementById("ytUrl").value;
+  const url = document.getElementById("ytUrl").value.trim();
   const id = extractVideoId(url);
 
   if (!id) {
@@ -39,20 +47,13 @@ function playMusic() {
     return;
   }
 
-  // Music
   musicPlayer.loadVideoById(id);
   musicPlayer.playVideo();
-
-  // Enable background sound AFTER click
-  bgPlayer.unMute();
-
-  setVolume(50);
 }
 
-// ONE slider → BOTH players
+// Volume slider → MUSIC ONLY
 function setVolume(v) {
-  musicPlayer.setVolume(v);
-
-  // background quieter (car ambience)
-  bgPlayer.setVolume(Math.max(5, v * 0.25));
+  if (musicPlayer) {
+    musicPlayer.setVolume(v);
+  }
 }
