@@ -1,62 +1,73 @@
 let bgPlayer;
 let musicPlayer;
+let apiReady = false;
 
-// Called automatically by YouTube API
+// YouTube API ready
 function onYouTubeIframeAPIReady() {
+  apiReady = true;
 
-  // Background driving video
+  // Background video (MUTED autoplay allowed)
   bgPlayer = new YT.Player("bg-video", {
-  width: "100%",
-  height: "100%",
-  videoId: "spJqqu2H8n4",
-  playerVars: {
-    autoplay: 1,
-    loop: 1,
-    playlist: "spJqqu2H8n4",
-    controls: 0,
-    mute: 1,
-    modestbranding: 1,
-    playsinline: 1,
-    showinfo: 0,
-    rel: 0
-  }
-});
+    width: "100%",
+    height: "100%",
+    videoId: "spJqqu2H8n4",
+    playerVars: {
+      autoplay: 1,
+      loop: 1,
+      playlist: "spJqqu2H8n4",
+      controls: 0,
+      mute: 1,
+      modestbranding: 1,
+      playsinline: 1,
+      rel: 0
+    },
+    events: {
+      onReady: (e) => {
+        e.target.playVideo(); // force start
+      }
+    }
+  });
 
-
-  // Music player (hidden)
+  // Music player (hidden, waits for click)
   musicPlayer = new YT.Player("music-player", {
     height: "0",
     width: "0",
     playerVars: {
-      autoplay: 1,
+      autoplay: 0,
       controls: 0
     }
   });
 }
 
-// Extract YouTube video ID
+// Extract video ID safely
 function extractVideoId(url) {
-  const regex =
-    /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&]+)/;
-  const match = url.match(regex);
+  const match = url.match(
+    /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&]+)/i
+  );
   return match ? match[1] : null;
 }
 
-// Load music from user link
+// USER CLICK = AUDIO ALLOWED
 function playMusic() {
-  const url = document.getElementById("ytUrl").value;
+  if (!apiReady || !musicPlayer) {
+    alert("Player not ready yet, wait 1 second and try again.");
+    return;
+  }
+
+  const url = document.getElementById("ytUrl").value.trim();
   const videoId = extractVideoId(url);
 
   if (!videoId) {
-    alert("❌ Invalid YouTube link");
+    alert("❌ Please paste a valid YouTube link");
     return;
   }
 
   musicPlayer.loadVideoById(videoId);
+  musicPlayer.playVideo();   // REQUIRED
   musicPlayer.setVolume(50);
 }
 
-// Volume control
+// Volume slider
 function setVolume(value) {
   if (musicPlayer) {
     musicPlayer.setVolume(value);
