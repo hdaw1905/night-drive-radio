@@ -6,18 +6,22 @@ function onYouTubeIframeAPIReady() {
 
   // Background driving video
   bgPlayer = new YT.Player("bg-video", {
-    videoId: "spJqqu2H8n4",
-    playerVars: {
-      autoplay: 1,
-      loop: 1,
-      playlist: "spJqqu2H8n4",
-      controls: 0,
-      mute: 1,
-      modestbranding: 1,
-      playsinline: 1,
-      showinfo: 0
-    }
-  });
+  width: "100%",
+  height: "100%",
+  videoId: "spJqqu2H8n4",
+  playerVars: {
+    autoplay: 1,
+    loop: 1,
+    playlist: "spJqqu2H8n4",
+    controls: 0,
+    mute: 1,
+    modestbranding: 1,
+    playsinline: 1,
+    showinfo: 0,
+    rel: 0
+  }
+});
+
 
   // Music player (hidden)
   musicPlayer = new YT.Player("music-player", {
