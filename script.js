@@ -64,7 +64,7 @@ function playMusic() {
 
   // Enable background sound AFTER user interaction
   bgPlayer.unMute();
-  bgPlayer.setVolume(55);
+  bgPlayer.setVolume(40);
 }
 
 // Slider controls MUSIC only
