@@ -1,89 +1,176 @@
-let bgPlayer;
+let backgroundPlayer;
 let musicPlayer;
+let isPlayerReady = false;
+let isMusicPlayerReady = false;
 
-// YouTube API ready
-function onYouTubeIframeAPIReady() {
+const BACKGROUND_VIDEO_ID = 'spJqqu2H8n4';
+const BACKGROUND_VOLUME = 40;
+const STORAGE_KEY = 'nightDriveLastUrl';
 
-  // Background driving video
-  bgPlayer = new YT.Player("bg-video", {
-    videoId: "spJqqu2H8n4",
-    playerVars: {
-      autoplay: 1,
-      loop: 1,
-      playlist: "spJqqu2H8n4",
-      controls: 0,
-      mute: 1,
-      playsinline: 1
-    },
-    events: {
-      onReady: function (event) {
-        event.target.playVideo();
-      }
+window.onYouTubeIframeAPIReady = function() {
+    backgroundPlayer = new YT.Player('background-player', {
+        videoId: BACKGROUND_VIDEO_ID,
+        playerVars: {
+            autoplay: 1,
+            controls: 0,
+            mute: 1,
+            loop: 1,
+            playlist: BACKGROUND_VIDEO_ID,
+            playsinline: 1,
+            rel: 0,
+            showinfo: 0,
+            modestbranding: 1,
+            iv_load_policy: 3
+        },
+        events: {
+            onReady: onBackgroundPlayerReady,
+            onStateChange: onBackgroundStateChange
+        }
+    });
+
+    musicPlayer = new YT.Player('music-player', {
+        playerVars: {
+            autoplay: 0,
+            controls: 0,
+            playsinline: 1
+        },
+        events: {
+            onReady: onMusicPlayerReady
+        }
+    });
+};
+
+function onBackgroundPlayerReady(event) {
+    isPlayerReady = true;
+    event.target.setVolume(0);
+    event.target.playVideo();
+}
+
+function onBackgroundStateChange(event) {
+    if (event.data === YT.PlayerState.PLAYING && isPlayerReady) {
+        event.target.setVolume(BACKGROUND_VOLUME);
     }
-  });
-
-  // Music player (hidden)
-  musicPlayer = new YT.Player("music-player", {
-    height: "0",
-    width: "0",
-    playerVars: { controls: 0 }
-  });
 }
 
-// Extract YouTube video ID (playlist-safe)
+function onMusicPlayerReady() {
+    isMusicPlayerReady = true;
+    loadLastUrl();
+}
+
 function extractVideoId(url) {
-  try {
-    const u = new URL(url);
-    return u.searchParams.get("v") || u.pathname.split("/").pop();
-  } catch {
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/,
+        /youtube\.com\/embed\/([^&\s]+)/,
+        /youtube\.com\/v\/([^&\s]+)/
+    ];
+
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+
+    if (/^[a-zA-Z0-9_-]{11}$/.test(url.trim())) {
+        return url.trim();
+    }
+
     return null;
-  }
 }
 
-// Play music (user click)
 function playMusic() {
-  if (!musicPlayer || !bgPlayer) {
-    alert("Player loading… try again in a moment.");
-    return;
-  }
+    if (!isMusicPlayerReady) {
+        alert('Player is still loading. Please wait a moment.');
+        return;
+    }
 
-  const url = document.getElementById("ytUrl").value.trim();
-  const id = extractVideoId(url);
+    const urlInput = document.getElementById('youtube-url');
+    const url = urlInput.value.trim();
 
-  if (!id) {
-    alert("Invalid YouTube link");
-    return;
-  }
+    if (!url) {
+        alert('Please paste a YouTube URL');
+        return;
+    }
 
-  // 💾 Save last song
-  localStorage.setItem("lastSongUrl", url);
+    const videoId = extractVideoId(url);
 
-  musicPlayer.loadVideoById(id);
-  musicPlayer.playVideo();
-  musicPlayer.setVolume(50);
+    if (!videoId) {
+        alert('Invalid YouTube URL. Please try again.');
+        return;
+    }
 
-  // Background ambience
-  bgPlayer.unMute();
-  bgPlayer.setVolume(40);
+    try {
+        musicPlayer.loadVideoById(videoId);
+        musicPlayer.playVideo();
+
+        const volumeSlider = document.getElementById('volume-slider');
+        musicPlayer.setVolume(parseInt(volumeSlider.value));
+
+        saveLastUrl(url);
+    } catch (error) {
+        console.error('Error playing video:', error);
+        alert('Error playing video. Please try another URL.');
+    }
 }
 
-// Volume slider → music only
-function setVolume(v) {
-  if (musicPlayer) {
-    musicPlayer.setVolume(v);
-  }
+function updateMusicVolume(volume) {
+    if (isMusicPlayerReady) {
+        musicPlayer.setVolume(parseInt(volume));
+    }
 }
 
-// 🕹️ Hide / Show player
+function saveLastUrl(url) {
+    try {
+        localStorage.setItem(STORAGE_KEY, url);
+    } catch (error) {
+        console.error('Could not save to localStorage:', error);
+    }
+}
+
+function loadLastUrl() {
+    try {
+        const lastUrl = localStorage.getItem(STORAGE_KEY);
+        if (lastUrl) {
+            document.getElementById('youtube-url').value = lastUrl;
+        }
+    } catch (error) {
+        console.error('Could not load from localStorage:', error);
+    }
+}
+
 function togglePlayer() {
-  const controls = document.querySelector(".controls");
-  controls.classList.toggle("hidden");
+    const playerUI = document.getElementById('player-ui');
+    const toggleBtn = document.getElementById('toggle-player-btn');
+
+    if (playerUI.classList.contains('hidden')) {
+        playerUI.classList.remove('hidden');
+        toggleBtn.textContent = 'Hide Player';
+    } else {
+        playerUI.classList.add('hidden');
+        toggleBtn.textContent = 'Show Player';
+    }
 }
 
-// Restore last song on load
-window.addEventListener("load", () => {
-  const lastSong = localStorage.getItem("lastSongUrl");
-  if (lastSong) {
-    document.getElementById("ytUrl").value = lastSong;
-  }
+document.addEventListener('DOMContentLoaded', function() {
+    const playBtn = document.getElementById('play-btn');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeValue = document.getElementById('volume-value');
+    const toggleBtn = document.getElementById('toggle-player-btn');
+    const urlInput = document.getElementById('youtube-url');
+
+    playBtn.addEventListener('click', playMusic);
+
+    urlInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            playMusic();
+        }
+    });
+
+    volumeSlider.addEventListener('input', function() {
+        const volume = this.value;
+        volumeValue.textContent = volume + '%';
+        updateMusicVolume(volume);
+    });
+
+    toggleBtn.addEventListener('click', togglePlayer);
 });
